@@ -1,52 +1,86 @@
 public class BinarySearchTree<E extends Comparable<E>> extends BinaryTree<E> {
 
-    // TODO: generic constructor
     public BinarySearchTree() {
         this.root = null;
         this.size = 0;
     }
-    // TODO: constructor
+
     public BinarySearchTree(E val) {
-        Node<E> head = new Node<>();
-        head.info = val;
+        Node<E> head = new Node<>(val);
         this.root = head;
     }
 
-    // TODO: returns true if BST has val else false.
+    // returns true if BST has val else false.
     public boolean contains (E val) {
-        return true;
+        Node<E> current = this.root;
+
+        while (current != null && !current.getInfo().equals(val)) {
+            if (val.compareTo(current.getInfo()) < 0) {
+                current = current.getLeft();
+            } else {
+                current = current.getRight();
+            }
+        }
+        return (current != null);
     }
 
-    public Node insertHelper(E val, Node tempRoot) {
-        if (val.compareTo((E) tempRoot.info) < 0)
-            tempRoot.left = insertHelper(val, tempRoot.left);
-        else if (val.compareTo((E) tempRoot.info) > 0)
-            root.right = insertHelper(val, tempRoot.right);
-        return tempRoot;
-    }
-
-    // TODO: inserts val at the right place satisfying search tree properties,
-    //  should handle if the tree is empty, if value is there don't insert again
-    public void insert(E val) {
-        if (this.root == null) {
-            Node<E> head = new Node<>();
-            head.info = val;
-            this.root = head;
-        } else {
-            this.root = insertHelper(val, this.root);
+    public void insertHelper(Node<E> newNode, Node<E> current) {
+        if (!this.contains(newNode.getInfo())) {
+            if (this.root == null) {
+                this.root = newNode;
+            } else {
+                if (newNode.getInfo().compareTo(current.getInfo()) < 0) {
+                    if (current.getLeft() == null)
+                        current.left = newNode;
+                    else {
+                        insertHelper(newNode, current.getLeft());
+                    }
+                }
+                if (newNode.getInfo().compareTo(current.getInfo()) > 0) {
+                    if (current.getRight() == null)
+                        current.right = newNode;
+                    else {
+                        insertHelper(newNode, current.getRight());
+                    }
+                }
+            }
         }
     }
 
-    // TODO: returns the minimum value stored in the tree
+    //  inserts val at the right place satisfying search tree properties,
+    //  should handle if the tree is empty, if value is there don't insert again
+    public void insert(E val) {
+        Node<E> n = new Node<>(val);
+        insertHelper(n, this.root);
+    }
+
+    //  returns the minimum value stored in the tree
     public E findMin() {
-        return root.info;
+        if (this.root == null)
+            return null;
+        else {
+            Node<E> current = this.root;
+            while (current.getLeft() != null) {
+                current = current.getLeft();
+            }
+            return current.getInfo();
+        }
     }
 
-    // TODO: returns the maximum value stored in the tree
+    //  returns the maximum value stored in the tree
     public E findMax() {
-        return root.info;
+        if (this.root == null)
+            return null;
+        else {
+            Node<E> current = this.root;
+            while (current.getRight() != null) {
+                current = current.getRight();
+            }
+            return current.getInfo();
+        }
     }
 
+    // testing purposes
     public static void main(String[] args) {
         BinarySearchTree<Integer> bt= new BinarySearchTree<>();
         bt.insert(5);
@@ -55,7 +89,15 @@ public class BinarySearchTree<E extends Comparable<E>> extends BinaryTree<E> {
         bt.insert(20);
         bt.insert(8);
         bt.insert(4);
-        bt.postOrder(bt.root);
+        System.out.println(bt.contains(5));
+        System.out.println(bt.contains(10));
+        System.out.println(bt.contains(3));
+        System.out.println(bt.contains(20));
+        System.out.println(bt.contains(8));
+        System.out.println(bt.contains(4));
+        System.out.println(bt.contains(9));
+        System.out.println(bt.findMin());
+        System.out.println(bt.findMax());
     }
 
 
